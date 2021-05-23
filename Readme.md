@@ -10,7 +10,7 @@
 ![I_tree](figure/integration_tree.png)  
 并实现各种信息在输出栏中，训练准确率大于95%。
 ***
-### 二.basicTree_train.py和basicTree_test.py为底层决策树实现绘制与测试  
+#### 二.basicTree_train.py和basicTree_test.py为底层决策树实现绘制与测试  
 首先运行basicTree_train.py训练决策树，训练结束后会绘制图像，并将决策树的测试数据、决策树的数据结构和分类标签以.txt文件形式保存：  
 temp_label.txt保存标签  
 test_data.txt保存测试数据  
