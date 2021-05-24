@@ -84,6 +84,12 @@ def show_result(precision, recall, classes):
         print(item, '\t', precision[item], '\t', recall[item], '\t', f1_score(precision[item], recall[item]))
 
 
+def score(my_tree, label, test_set):
+    matrix = confusion_matrix(my_tree, label, test_set)  # confusion matrix
+    classes = ['Iris-setosa', 'Iris-versicolor', 'Iris-virginica']  # 所有分类
+    return accuracy(classes, matrix)
+
+
 if __name__ == "__main__":
     f = open('tree.txt', 'r')
     Tree = eval(f.read())
@@ -94,9 +100,21 @@ if __name__ == "__main__":
     h = open('temp_label.txt', 'r')
     temp_label = eval(h.read())
     h.close()
+    J = open('tree_cut.txt', 'r')
+    Tree_cut = eval(J.read())
+    J.close()
+
     matrix = confusion_matrix(Tree, temp_label, test_dataset)  # confusion matrix
     classes = ['Iris-setosa', 'Iris-versicolor', 'Iris-virginica']  # 所有分类
     precision_value = precision(classes, matrix)
     recall_value = recall(classes, matrix)
     show_result(precision_value, recall_value, classes)
-    print('aaccuracy = ' + str(accuracy(classes, matrix)))
+    print('accuracy = ' + str(accuracy(classes, matrix)))
+
+    print("after pruning")
+
+    matrix_cut = confusion_matrix(Tree_cut, temp_label, test_dataset)  # confusion matrix
+    precision_value = precision(classes, matrix_cut)
+    recall_value = recall(classes, matrix)
+    show_result(precision_value, recall_value, classes)
+    print('accuracy = ' + str(accuracy(classes, matrix_cut)))

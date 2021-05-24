@@ -7,6 +7,8 @@ import treePlotter
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn import tree
+from basicTree_test import test_classify, score
+import copy
 
 
 # 数据处理
@@ -167,11 +169,95 @@ def decision_tree(dataset, labels):
     return my_tree
 
 
+def decision_tree_cut(dataset, labels, layer, layer_limit, data_limit):
+    # 拿到所有数据集的分类标签
+    layer = layer+1
+    class_list = [data[-1] for data in dataset]
+
+    if layer >= layer_limit:
+        return count_num(dataset)
+    # 统计第一个标签出现的次数并与总标签个数比较，如果相等则说明当前列表中全部都是一种标签，此时停止划分
+
+    if len(dataset) <= data_limit:
+        return count_num(dataset)
+
+    if class_list.count(class_list[0]) == len(class_list):
+        return class_list[0]
+
+    # 选择最好的划分特征，得到该特征的下标
+    best_feature = feature_choose(dataset=dataset)
+
+    # 得到最好特征的名称
+    best_feature_label = ''
+    # 重新修改分叉点信息
+    best_feature_label = str(labels[best_feature[0]]) + '=' + str(best_feature[1])
+    # 得到当前的划分点
+    dot = best_feature[1]
+    # 得到下标值
+    best_feature = best_feature[0]
+    # 连续值标志
+
+    # 使用一个字典来存储树结构，分叉处为划分的特征名称
+    my_tree = {best_feature_label: {}}
+
+    # 将连续值划分为不大于当前划分点和大于当前划分点两部分
+    low_dataset, high_dataset = split_part_dataset(dataset, best_feature, dot)
+    # 得到剩下的特征标签
+    son_labels = labels[:]
+    # 递归处理小于划分点的子树
+    son_tree = decision_tree_cut(low_dataset, son_labels, layer, layer_limit, data_limit)
+    my_tree[best_feature_label]['<'] = son_tree
+    # 递归处理大于当前划分点的子树
+    son_tree = decision_tree_cut(high_dataset, son_labels, layer, layer_limit, data_limit)
+    my_tree[best_feature_label]['>'] = son_tree
+
+    return my_tree
+
+
+def count_num(data):
+    out = dict()
+    flower = []
+    for d in data:
+        flower.append(d[-1])
+    flower_set = set(flower)
+    for key in flower_set:
+        out[key] = flower.count(key)
+    best = 0
+    which = ''
+    for key, value in out.items():
+        if value > best:
+            value = best
+            which = key
+    return which
+
+
+def fit_theta(a_dataset, e_dataset, label):
+    best_tree = decision_tree_cut(a_dataset, label, 0, layer_limit=4, data_limit=10)
+    best_acc = score(best_tree, label, e_dataset)
+    a = 4
+    b = 10
+    for layer_fit in range(3, 10):
+        for num_fit in range(3, 20):
+            tree_cut = decision_tree_cut(a_dataset, label, 0, layer_limit=layer_fit, data_limit=num_fit)
+            tree_acc = score(tree_cut, label, e_dataset)
+            if tree_acc > best_acc:
+                best_tree = tree_cut
+                best_acc = tree_acc
+                a = layer_fit
+                b = num_fit
+    return a, b
+
+
 if __name__ == '__main__':
     train_dataset, test_dataset, labels = get_dataset(0.3)
-    temp_label = labels[:]  # 深拷贝
+    temp_label = labels[:]
     Tree = decision_tree(train_dataset, labels)
+    a, b = fit_theta(train_dataset, test_dataset, temp_label)
+    print(a, b)
+    Tree_cut = decision_tree_cut(train_dataset, labels, 0, layer_limit=a, data_limit=b)
     treePlotter.create_plot(Tree)
+    treePlotter.create_plot(Tree_cut)
+
     print(str(Tree))
     f = open('tree.txt', 'w')
     f.write(str(Tree))
@@ -182,3 +268,8 @@ if __name__ == '__main__':
     h = open('temp_label.txt', 'w')
     h.write(str(labels))
     h.close()
+    print(str(Tree_cut))
+    J = open('tree_cut.txt', 'w')
+    J.write(str(Tree_cut))
+    J.close()
+

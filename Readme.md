@@ -33,7 +33,16 @@ tree.txt保存树的数据结构
 ![para](figure/EM_parameters.png)  
 ![ml](figure/maximum_likelihood.png)
 ***
-#### 五.参考文献
+#### 五.剪枝对比  
+运行basicTree_train.py和basicTree_test.py两文件，可以获得剪枝前后对比图，和对比测试结果  
+剪枝参数由拟合取最优值得到
+![no_cut](figure/before%20pruning.png)  
+  
+![cut](figure/after_pruning.png)  
+
+![con](figure/prune_contract_tree.png)
+***
+#### 六.参考文献
 决策树绘制参考：https://www.cnblogs.com/further-further-further/p/9429257.html  
 底层决策树参考：https://zhuanlan.zhihu.com/p/136437598
 
