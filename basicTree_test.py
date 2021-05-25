@@ -74,7 +74,7 @@ def accuracy(classes, matrix):
         right_num += matrix[row][row]
         for column in classes:
             sum_num += matrix[row][column]
-    return round(right_num / sum_num, 2)
+    return round(right_num / sum_num, 4)
 
 
 # 展示结果

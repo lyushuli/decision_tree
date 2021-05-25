@@ -9,6 +9,11 @@ from sklearn.model_selection import train_test_split
 from sklearn import tree
 from basicTree_test import test_classify, score
 import copy
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.font_manager as fm
+import numpy as np
+from matplotlib import cm
 
 
 # 数据处理
@@ -214,6 +219,7 @@ def decision_tree_cut(dataset, labels, layer, layer_limit, data_limit):
     return my_tree
 
 
+# 计算数据集中较多的数据标签作为剪枝结果
 def count_num(data):
     out = dict()
     flower = []
@@ -231,28 +237,47 @@ def count_num(data):
     return which
 
 
+# 拟合得到最优树参数
 def fit_theta(a_dataset, e_dataset, label):
-    best_tree = decision_tree_cut(a_dataset, label, 0, layer_limit=4, data_limit=10)
+    best_tree = decision_tree_cut(a_dataset, label, 0, layer_limit=4, data_limit=1)
     best_acc = score(best_tree, label, e_dataset)
     a = 4
-    b = 10
+    b = 1
+    acc_list = []
+    layer_list = []
+    data_list = []
     for layer_fit in range(3, 10):
         for num_fit in range(3, 20):
-            tree_cut = decision_tree_cut(a_dataset, label, 0, layer_limit=layer_fit, data_limit=num_fit)
-            tree_acc = score(tree_cut, label, e_dataset)
+            temp_acc = []
+            # 多次测试取均值得到测试结果
+            for number in range(1, 10):
+                tree_cut = decision_tree_cut(a_dataset, label, 0, layer_limit=layer_fit, data_limit=num_fit)
+                tree_acc = score(tree_cut, label, e_dataset)
+                temp_acc.append(tree_acc)
+            tree_acc = sum(temp_acc) / len(temp_acc)
+            acc_list.append(tree_acc)
+            layer_list.append(layer_fit)
+            data_list.append(num_fit)
             if tree_acc > best_acc:
-                best_tree = tree_cut
                 best_acc = tree_acc
                 a = layer_fit
                 b = num_fit
-    return a, b
+    return a, b, acc_list, layer_list, data_list
+
+
+def plot_learn_curve(x, y, z):
+    ax = plt.axes(projection='3d')
+    ax.scatter3D(x, y, z, c=z, s=20, cmap="jet")
+    plt.show()
 
 
 if __name__ == '__main__':
     train_dataset, test_dataset, labels = get_dataset(0.3)
     temp_label = labels[:]
     Tree = decision_tree(train_dataset, labels)
-    a, b = fit_theta(train_dataset, test_dataset, temp_label)
+    a, b, acc_l, layer_l, data_l = fit_theta(train_dataset, test_dataset, temp_label)
+    plot_learn_curve(layer_l, data_l, acc_l)
+
     print(a, b)
     Tree_cut = decision_tree_cut(train_dataset, labels, 0, layer_limit=a, data_limit=b)
     treePlotter.create_plot(Tree)

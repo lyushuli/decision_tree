@@ -40,7 +40,11 @@ tree.txt保存树的数据结构
   
 ![cut](figure/after_pruning.png)  
 
-![con](figure/prune_contract_tree.png)
+![con](figure/prune_contract_tree.png)  
+由剪枝参数-准确率三维图可以看出，选用剪枝可以在保持正确率的情况下，选择模型复杂度最低的决策树作为结果：  
+![con](figure/learn_point.png)  
+图中同一颜色正确率相同，越偏向左方，模型复杂度越低，泛化能力越强。
+
 ***
 #### 六.参考文献
 决策树绘制参考：https://www.cnblogs.com/further-further-further/p/9429257.html  
