@@ -18,8 +18,7 @@ from matplotlib import cm
 
 # 数据处理
 # 获取数据 划分数据集
-def get_dataset(test_size):
-    dataset = pd.read_csv("iris.data").values.tolist()
+def get_dataset(dataset, test_size):
     random.shuffle(dataset)
     # 特征值列表
     train_dataset, test_dataset = train_test_split(dataset, test_size=test_size, random_state=2)
@@ -182,7 +181,6 @@ def decision_tree_cut(dataset, labels, layer, layer_limit, data_limit):
     if layer >= layer_limit:
         return count_num(dataset)
     # 统计第一个标签出现的次数并与总标签个数比较，如果相等则说明当前列表中全部都是一种标签，此时停止划分
-
     if len(dataset) <= data_limit:
         return count_num(dataset)
 
@@ -239,10 +237,10 @@ def count_num(data):
 
 # 拟合得到最优树参数
 def fit_theta(a_dataset, e_dataset, label):
-    best_tree = decision_tree_cut(a_dataset, label, 0, layer_limit=4, data_limit=1)
+    best_tree = decision_tree_cut(a_dataset, label, 0, layer_limit=4, data_limit=3)
     best_acc = score(best_tree, label, e_dataset)
     a = 4
-    b = 1
+    b = 3
     acc_list = []
     layer_list = []
     data_list = []
@@ -272,12 +270,14 @@ def plot_learn_curve(x, y, z):
 
 
 if __name__ == '__main__':
-    train_dataset, test_dataset, labels = get_dataset(0.3)
+    data_set = pd.read_csv("iris.data").values.tolist()
+    train_dataset, test_dataset, labels = get_dataset(data_set, 0.2)
     temp_label = labels[:]
-    Tree = decision_tree(train_dataset, labels)
-    a, b, acc_l, layer_l, data_l = fit_theta(train_dataset, test_dataset, temp_label)
-    plot_learn_curve(layer_l, data_l, acc_l)
+    train_dataset, val_dataset, labels = get_dataset(train_dataset, 0.25)
 
+    Tree = decision_tree(train_dataset, labels)
+    a, b, acc_l, layer_l, data_l = fit_theta(train_dataset, val_dataset, temp_label)
+    plot_learn_curve(layer_l, data_l, acc_l)
     print(a, b)
     Tree_cut = decision_tree_cut(train_dataset, labels, 0, layer_limit=a, data_limit=b)
     treePlotter.create_plot(Tree)

@@ -1,1 +1,1 @@
-{'petal length (cm)=2.45': {'<': 'Iris-setosa', '>': {'petal width (cm)=1.65': {'<': {'sepal length (cm)=7.1': {'<': 'Iris-versicolor', '>': 'Iris-virginica'}}, '>': {'petal length (cm)=4.85': {'<': 'Iris-versicolor', '>': 'Iris-virginica'}}}}}}
+{'petal length (cm)=2.45': {'<': 'Iris-setosa', '>': {'petal length (cm)=4.75': {'<': 'Iris-versicolor', '>': {'petal length (cm)=5.05': {'<': 'Iris-versicolor', '>': 'Iris-virginica'}}}}}}
