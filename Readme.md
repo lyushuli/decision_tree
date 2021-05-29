@@ -45,7 +45,10 @@ tree.txt保存树的数据结构
 图中同一颜色正确率相同，越偏向左方，模型复杂度越低，泛化能力越强。
 
 ***
-#### 六.参考文献
+#### 六.软决策树简单实验  
+将basicTree_test.py中的confusion_matrix函数中的predict函数更改，即可得到简单的软决策树结果。（由于未对分布与参数进行估算，所以效果并不理想）
+
+#### 七.参考文献
 决策树绘制参考：https://www.cnblogs.com/further-further-further/p/9429257.html  
 底层决策树参考：https://zhuanlan.zhihu.com/p/136437598
 
